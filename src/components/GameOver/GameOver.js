@@ -13,8 +13,17 @@ const Container = styled.div`
 `
 
 export const RestartButton = styled.button`
-  background-color: #fbb13c;
   font-size: 34px;
+  background-color: #fbb13c;
+  text-align: center;
+  line-height: 150%;
+  cursor: pointer;
+  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.4);
+  }
 `
 
 const tableFlip = '(ﾉ´･ω･)ﾉ ﾐ ┸━┸'

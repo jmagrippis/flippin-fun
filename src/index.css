@@ -1,5 +1,5 @@
 body {
-  font-family: sans-serif;
+  font-family: 'Indie Flower', cursive;
 }
 
 html {
@@ -11,4 +11,23 @@ body,
 #root {
   display: flex;
   flex: 1;
+}
+
+button {
+  background: none repeat scroll 0 0 transparent;
+  border: medium none;
+  border-spacing: 0;
+  font-family: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  list-style: none outside none;
+  text-decoration: none;
+  text-indent: 0;
+  outline: none;
+}
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+  border: 0;
+  padding: 0;
 }
