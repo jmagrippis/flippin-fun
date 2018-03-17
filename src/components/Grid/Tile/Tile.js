@@ -6,9 +6,14 @@ const Container = styled.div`
 `
 
 class Tile extends PureComponent {
+  onClick = () => {
+    const { index, onClick } = this.props
+    onClick(index)
+  }
+
   render() {
     const { color } = this.props
-    return <Container backgroundColor={color} />
+    return <Container backgroundColor={color} onClick={this.onClick} />
   }
 }
 

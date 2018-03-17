@@ -11,13 +11,42 @@ const Container = styled.div`
 `
 
 class Grid extends PureComponent {
-  static defaultProps = { width: 3 }
+  static defaultProps = {
+    colors: ['#fbb13c', '#d81159'],
+    width: 3
+  }
+
+  state = {
+    tiles: this.getTilesSquare(this.props.width, this.props.colors)
+  }
+
+  getRandomElement(array) {
+    return array[Math.floor(Math.random() * array.length)]
+  }
+
+  getTilesSquare(size, colors) {
+    return [...Array(size ** 2)].map(() => this.getRandomElement(colors))
+  }
+
+  onTileClick = () => {}
+
+  componentWillReceiveProps(nextProps) {
+    const { width } = this.props
+    if (width !== nextProps.width) {
+      this.setState({
+        tiles: this.getTilesSquare(nextProps.width, nextProps.colors)
+      })
+    }
+  }
 
   render() {
-    const { width } = this.props
+    const { tiles } = this.state
+
     return (
-      <Container width={width}>
-        {[...Array(width ** 2)].map((v, i) => <Tile key={i} color="#d81159" />)}
+      <Container width={~~Math.sqrt(tiles.length)}>
+        {tiles.map((color, i) => (
+          <Tile key={i} index={i} color={color} onClick={this.onTileClick} />
+        ))}
       </Container>
     )
   }
