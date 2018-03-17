@@ -12,31 +12,52 @@ const Container = styled.div`
 
 class Grid extends PureComponent {
   static defaultProps = {
-    colors: ['#fbb13c', '#d81159'],
+    offColor: '#fbb13c',
+    targetColor: '#d81159',
     width: 3
   }
 
   state = {
-    tiles: this.getTilesSquare(this.props.width, this.props.colors)
+    tiles: this.getTilesSquare(this.props)
   }
 
-  getRandomElement(array) {
-    return array[Math.floor(Math.random() * array.length)]
+  getRandomColor({ targetColor, offColor }) {
+    return Math.random() >= 0.5 ? targetColor : offColor
   }
 
-  getTilesSquare(size, colors) {
-    return [...Array(size ** 2)].map(() => this.getRandomElement(colors))
+  getOtherColor(currentColor, { targetColor, offColor }) {
+    return currentColor === targetColor ? offColor : targetColor
   }
 
-  onTileClick = () => {}
+  getTilesSquare({ width, ...restProps }) {
+    return [...Array(width ** 2)].map(() => this.getRandomColor(restProps))
+  }
 
   componentWillReceiveProps(nextProps) {
     const { width } = this.props
     if (width !== nextProps.width) {
       this.setState({
-        tiles: this.getTilesSquare(nextProps.width, nextProps.colors)
+        tiles: this.getTilesSquare(nextProps)
       })
     }
+  }
+
+  componentDidUpdate() {
+    const { onWin, targetColor } = this.props
+    const { tiles } = this.state
+    if (tiles.every(color => color === targetColor)) {
+      onWin()
+    }
+  }
+
+  onTileClick = i => {
+    this.setState(({ tiles }) => ({
+      tiles: [
+        ...tiles.slice(0, i),
+        this.getOtherColor(tiles[i], this.props),
+        ...tiles.slice(i + 1)
+      ]
+    }))
   }
 
   render() {

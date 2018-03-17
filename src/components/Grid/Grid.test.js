@@ -64,12 +64,81 @@ it('gives tiles color according to its state', () => {
 
 it('gives tiles one of its given colors', () => {
   const props = {
-    colors: ['red', 'green', '#000000']
+    offColor: 'green',
+    targetColor: 'red'
   }
+
+  const colors = [props.offColor, props.targetColor]
 
   const component = shallow(<Grid {...props} />)
 
   component.find(Tile).forEach(tile => {
-    expect(props.colors).toContain(tile.prop('color'))
+    expect(colors).toContain(tile.prop('color'))
   })
+})
+
+it('changes the color of the clicked tile', () => {
+  const props = {
+    offColor: 'green',
+    targetColor: 'red',
+    width: 2
+  }
+
+  const component = shallow(<Grid {...props} />)
+
+  const color = component
+    .find(Tile)
+    .first()
+    .prop('color')
+
+  component.instance().onTileClick(0)
+
+  component.update()
+
+  const nextColor = component
+    .find(Tile)
+    .first()
+    .prop('color')
+
+  expect(nextColor).not.toBe(color)
+})
+
+it('changes the color of the clicked tile to a valid color', () => {
+  const props = {
+    offColor: 'green',
+    targetColor: 'red',
+    width: 2
+  }
+
+  const colors = [props.offColor, props.targetColor]
+
+  const component = shallow(<Grid {...props} />)
+
+  component.instance().onTileClick(0)
+
+  component.update()
+
+  const color = component
+    .find(Tile)
+    .first()
+    .prop('color')
+
+  expect(colors).toContain(color)
+})
+
+it('calls its `onWin` if every tile is the target color', () => {
+  const props = {
+    offColor: 'green',
+    targetColor: 'red',
+    width: 2,
+    onWin: jest.fn()
+  }
+
+  const component = shallow(<Grid {...props} />)
+
+  const tiles = ['red', 'red', 'red', 'red']
+
+  component.setState({ tiles })
+
+  expect(props.onWin).toBeCalled()
 })
