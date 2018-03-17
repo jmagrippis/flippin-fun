@@ -45,18 +45,61 @@ class Grid extends PureComponent {
   componentDidUpdate() {
     const { onWin, targetColor } = this.props
     const { tiles } = this.state
-    if (tiles.every(color => color === targetColor)) {
+    if (onWin && tiles.every(color => color === targetColor)) {
       onWin()
     }
   }
 
+  getRow(i, tiles) {
+    return ~~(i / Math.sqrt(tiles.length))
+  }
+
+  isOnRow(i, row, tiles) {
+    return this.getRow(i, tiles) === row
+  }
+
+  getColumn(i, tiles) {
+    return i % Math.sqrt(tiles.length)
+  }
+
+  isOnColumn(i, column, tiles) {
+    return this.getColumn(i, tiles) === column
+  }
+
+  isInRange(i, { row, column }, tiles) {
+    return (
+      Math.abs(this.getColumn(i, tiles) - column) <= 1 &&
+      Math.abs(this.getRow(i, tiles) - row) <= 1
+    )
+  }
+
+  shouldChangeColor(i, source, tiles) {
+    const { i: sourceIndex, row, column } = source
+
+    if (i === sourceIndex) return true
+
+    return (
+      this.isInRange(i, source, tiles) &&
+      (this.isOnRow(i, row, tiles) || this.isOnColumn(i, column, tiles))
+    )
+  }
+
+  getNextTiles(tiles, sourceIndex, colors) {
+    const row = this.getRow(sourceIndex, tiles)
+    const column = this.getColumn(sourceIndex, tiles)
+
+    const source = { row, column, i: sourceIndex }
+    return tiles.map(
+      (color, i) =>
+        this.shouldChangeColor(i, source, tiles)
+          ? this.getOtherColor(color, colors)
+          : color
+    )
+  }
+
   onTileClick = i => {
     this.setState(({ tiles }) => ({
-      tiles: [
-        ...tiles.slice(0, i),
-        this.getOtherColor(tiles[i], this.props),
-        ...tiles.slice(i + 1)
-      ]
+      tiles: this.getNextTiles(tiles, i, this.props)
     }))
   }
 
