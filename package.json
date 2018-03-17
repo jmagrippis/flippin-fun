@@ -33,5 +33,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/jmagrippis/flippin-fun"
-  }
+  },
+  "homepage": "https://flippin-fun.netlify.com/"
 }
