@@ -3,6 +3,8 @@ import styled from 'styled-components'
 
 const Container = styled.div`
   background-color: ${({ backgroundColor }) => backgroundColor};
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 `
 
 class Tile extends PureComponent {

@@ -18,7 +18,8 @@ class Grid extends PureComponent {
   }
 
   state = {
-    tiles: this.getTilesSquare(this.props)
+    tiles: this.getTilesSquare(this.props),
+    moveCount: 0
   }
 
   getRandomColor({ targetColor, offColor }) {
@@ -44,9 +45,9 @@ class Grid extends PureComponent {
 
   componentDidUpdate() {
     const { onWin, targetColor } = this.props
-    const { tiles } = this.state
+    const { tiles, moveCount } = this.state
     if (onWin && tiles.every(color => color === targetColor)) {
-      onWin()
+      onWin(moveCount)
     }
   }
 
@@ -98,8 +99,9 @@ class Grid extends PureComponent {
   }
 
   onTileClick = i => {
-    this.setState(({ tiles }) => ({
-      tiles: this.getNextTiles(tiles, i, this.props)
+    this.setState(({ moveCount, tiles }) => ({
+      tiles: this.getNextTiles(tiles, i, this.props),
+      moveCount: moveCount + 1
     }))
   }
 

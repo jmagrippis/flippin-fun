@@ -126,7 +126,7 @@ it('changes the color of the clicked tile to a valid color', () => {
   expect(colors).toContain(color)
 })
 
-it('calls its `onWin` if every tile is the target color', () => {
+it('calls the given `onWin` if every tile is the target color', () => {
   const props = {
     offColor: 'green',
     targetColor: 'red',
@@ -343,4 +343,53 @@ it('does not change the color of a tile on the right of the clicked one, if it i
     .prop('color')
 
   expect(nextColor).toBe(color)
+})
+
+it('keeps a count of the moves', () => {
+  const props = {
+    offColor: 'green',
+    targetColor: 'red',
+    width: 2
+  }
+
+  const component = shallow(<Grid {...props} />)
+
+  expect(component.state('moveCount')).toBe(0)
+})
+
+it('increases the move count for every click', () => {
+  const props = {
+    offColor: 'green',
+    targetColor: 'red',
+    width: 2
+  }
+
+  const component = shallow(<Grid {...props} />)
+
+  component.instance().onTileClick(0)
+
+  expect(component.state('moveCount')).toBe(1)
+
+  component.instance().onTileClick(5)
+  component.instance().onTileClick(5)
+
+  expect(component.state('moveCount')).toBe(3)
+})
+
+it('calls the given `onWin` with its move count', () => {
+  const props = {
+    offColor: 'green',
+    targetColor: 'red',
+    width: 2,
+    onWin: jest.fn()
+  }
+
+  const component = shallow(<Grid {...props} />)
+
+  const tiles = ['red', 'red', 'red', 'red']
+  const moveCount = 42
+
+  component.setState({ tiles, moveCount })
+
+  expect(props.onWin).toBeCalledWith(moveCount)
 })
