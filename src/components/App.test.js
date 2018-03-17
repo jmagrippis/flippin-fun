@@ -4,5 +4,6 @@ import { shallow } from 'enzyme'
 import App from './App'
 
 it('renders without crashing', () => {
-  shallow(<App />)
+  const component = shallow(<App />)
+  expect(component).toBeDefined()
 })

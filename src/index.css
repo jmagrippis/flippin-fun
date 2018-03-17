@@ -1,3 +1,14 @@
 body {
   font-family: sans-serif;
 }
+
+html {
+  min-height: 100%;
+  display: flex;
+}
+
+body,
+#root {
+  display: flex;
+  flex: 1;
+}
