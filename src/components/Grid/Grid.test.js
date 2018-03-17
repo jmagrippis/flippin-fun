@@ -393,3 +393,24 @@ it('calls the given `onWin` with its move count', () => {
 
   expect(props.onWin).toBeCalledWith(moveCount)
 })
+
+describe('getTilesSquare', () => {
+  it('never returns tiles already in a win state', () => {
+    const props = {
+      offColor: 'purple',
+      targetColor: 'purple',
+      width: 3
+    }
+
+    Grid.getOtherColor = jest.fn(() => 'rigged')
+
+    const tiles = Grid.getTilesSquare(props)
+
+    expect(Grid.getOtherColor).toBeCalledWith('purple', {
+      offColor: 'purple',
+      targetColor: 'purple'
+    })
+
+    expect(tiles[8]).toBe('rigged')
+  })
+})

@@ -18,37 +18,42 @@ class Grid extends PureComponent {
   }
 
   state = {
-    tiles: this.getTilesSquare(this.props),
+    tiles: Grid.getTilesSquare(this.props),
     moveCount: 0
   }
 
-  getRandomColor({ targetColor, offColor }) {
+  static getRandomColor({ targetColor, offColor }) {
     return Math.random() >= 0.5 ? targetColor : offColor
   }
 
-  getOtherColor(currentColor, { targetColor, offColor }) {
+  static getTilesSquare({ width, ...restProps }) {
+    const length = width ** 2
+    let allTheSameColor = true
+    let lastColor
+
+    return [...Array(length)].map((v, i) => {
+      const color = Grid.getRandomColor(restProps)
+
+      if (i === length - 1 && allTheSameColor) {
+        return Grid.getOtherColor(lastColor, restProps)
+      }
+
+      if (lastColor && lastColor !== color) {
+        allTheSameColor = false
+      }
+
+      lastColor = color
+
+      return color
+    })
+  }
+
+  static getOtherColor(currentColor, { targetColor, offColor }) {
     return currentColor === targetColor ? offColor : targetColor
   }
 
-  getTilesSquare({ width, ...restProps }) {
-    return [...Array(width ** 2)].map(() => this.getRandomColor(restProps))
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { width } = this.props
-    if (width !== nextProps.width) {
-      this.setState({
-        tiles: this.getTilesSquare(nextProps)
-      })
-    }
-  }
-
-  componentDidUpdate() {
-    const { onWin, targetColor } = this.props
-    const { tiles, moveCount } = this.state
-    if (onWin && tiles.every(color => color === targetColor)) {
-      onWin(moveCount)
-    }
+  static areAllTargetColor(tiles, targetColor) {
+    return tiles.every(color => color === targetColor)
   }
 
   getRow(i, tiles) {
@@ -93,7 +98,7 @@ class Grid extends PureComponent {
     return tiles.map(
       (color, i) =>
         this.shouldChangeColor(i, source, tiles)
-          ? this.getOtherColor(color, colors)
+          ? Grid.getOtherColor(color, colors)
           : color
     )
   }
@@ -103,6 +108,24 @@ class Grid extends PureComponent {
       tiles: this.getNextTiles(tiles, i, this.props),
       moveCount: moveCount + 1
     }))
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { width } = this.props
+    if (width !== nextProps.width) {
+      this.setState({
+        tiles: Grid.getTilesSquare(nextProps)
+      })
+    }
+  }
+
+  componentDidUpdate() {
+    const { onWin, targetColor } = this.props
+    const { tiles, moveCount } = this.state
+
+    if (onWin && Grid.areAllTargetColor(tiles, targetColor)) {
+      onWin(moveCount)
+    }
   }
 
   render() {
