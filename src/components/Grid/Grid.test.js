@@ -3,6 +3,7 @@ import { shallow } from 'enzyme'
 
 import Grid from './Grid'
 import Tile from './Tile/Tile'
+import * as App from '../App'
 
 it('renders without crashing', () => {
   const component = shallow(<Grid />)
@@ -419,7 +420,7 @@ it('increases the move count for every click', () => {
   expect(component.state('moveCount')).toBe(3)
 })
 
-it('calls the given `onWin` with its move count', () => {
+it('calls the given `onWin` with the winning color and move count', () => {
   const colors = ['green', 'red']
 
   const props = {
@@ -435,7 +436,7 @@ it('calls the given `onWin` with its move count', () => {
 
   component.setState({ tiles, moveCount })
 
-  expect(props.onWin).toBeCalledWith(moveCount)
+  expect(props.onWin).toBeCalledWith('red', moveCount)
 })
 
 describe('getTilesSquare', () => {
@@ -447,11 +448,11 @@ describe('getTilesSquare', () => {
       width: 3
     }
 
-    Grid.getOtherColor = jest.fn(() => 'rigged')
+    App.getOtherColor = jest.fn(() => 'rigged')
 
     const tiles = Grid.getTilesSquare(props)
 
-    expect(Grid.getOtherColor).toBeCalledWith('purple', colors)
+    expect(App.getOtherColor).toBeCalledWith('purple', colors)
 
     expect(tiles[8]).toBe('rigged')
   })

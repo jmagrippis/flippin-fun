@@ -3,38 +3,49 @@ import React, { PureComponent } from 'react'
 import Grid from './Grid/Grid'
 import GameOver from './GameOver/GameOver'
 
+const RUBY = '#d81159'
+const YELLOW_ORANGE = '#fbb13c'
+
+export function getOtherColor(currentColor, [a, b]) {
+  return currentColor === a ? b : a
+}
+
 class App extends PureComponent {
   state = {
-    gameOver: false,
+    winningColor: '',
     wins: 0,
     totalMoveCount: 0
   }
 
-  onWin = lastMoveCount => {
+  static colors = [RUBY, YELLOW_ORANGE]
+
+  onWin = (winningColor, lastMoveCount) => {
     this.setState(({ wins, totalMoveCount }) => ({
+      winningColor,
       lastMoveCount,
       totalMoveCount: totalMoveCount + lastMoveCount,
-      wins: wins + 1,
-      gameOver: true
+      wins: wins + 1
     }))
   }
 
   restart = () => {
-    this.setState({ gameOver: false })
+    this.setState({ winningColor: '' })
   }
 
   render() {
-    const { gameOver, lastMoveCount, totalMoveCount, wins } = this.state
+    const { lastMoveCount, totalMoveCount, wins, winningColor } = this.state
 
-    return gameOver ? (
+    return winningColor ? (
       <GameOver
         lastMoveCount={lastMoveCount}
         totalMoveCount={totalMoveCount}
         wins={wins}
+        backgroundColor={winningColor}
+        accentColor={getOtherColor(winningColor, App.colors)}
         restart={this.restart}
       />
     ) : (
-      <Grid onWin={this.onWin} />
+      <Grid onWin={this.onWin} colors={App.colors} />
     )
   }
 }

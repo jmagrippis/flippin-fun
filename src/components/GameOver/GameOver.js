@@ -3,7 +3,7 @@ import styled from 'styled-components'
 
 const Container = styled.div`
   flex: 1;
-  background-color: #d81159;
+  background-color: ${({ backgroundColor }) => backgroundColor};
   color: #ffffff;
   font-size: 24px;
   display: flex;
@@ -14,7 +14,7 @@ const Container = styled.div`
 
 export const RestartButton = styled.button`
   font-size: 34px;
-  background-color: #fbb13c;
+  background-color: ${({ backgroundColor }) => backgroundColor};
   text-align: center;
   line-height: 150%;
   cursor: pointer;
@@ -30,9 +30,15 @@ const tableFlip = '(ﾉ´･ω･)ﾉ ﾐ ┸━┸'
 
 class GameOver extends PureComponent {
   render() {
-    const { lastMoveCount, restart, wins } = this.props
+    const {
+      lastMoveCount,
+      restart,
+      wins,
+      backgroundColor,
+      accentColor
+    } = this.props
     return (
-      <Container>
+      <Container backgroundColor={backgroundColor}>
         <div>You won!</div>
         <div>
           You needed {lastMoveCount} move{lastMoveCount === 1 ? '' : 's'}.
@@ -40,7 +46,7 @@ class GameOver extends PureComponent {
         <div>
           {wins === 1 ? 'It was your first win!' : `This was win #${wins}!`}
         </div>
-        <RestartButton onClick={restart}>
+        <RestartButton backgroundColor={accentColor} onClick={restart}>
           <div>Play again!</div>
           <div>{tableFlip}</div>
         </RestartButton>

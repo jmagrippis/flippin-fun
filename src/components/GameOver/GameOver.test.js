@@ -18,3 +18,15 @@ it('calls its restart when the button is clicked', () => {
 
   expect(props.restart).toBeCalled()
 })
+
+it('passes its background color to the container', () => {
+  const component = shallow(<GameOver backgroundColor="purple" />)
+
+  expect(component.prop('backgroundColor')).toBe('purple')
+})
+
+it('passes its accent color to the button', () => {
+  const component = shallow(<GameOver accentColor="green" />)
+
+  expect(component.find(RestartButton).prop('backgroundColor')).toBe('green')
+})

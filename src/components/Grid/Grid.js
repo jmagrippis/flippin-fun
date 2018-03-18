@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react'
 import styled from 'styled-components'
 
 import Tile from './Tile/Tile'
+import { getOtherColor } from '../App'
 
 const Container = styled.div`
   flex: 1;
@@ -34,7 +35,7 @@ class Grid extends PureComponent {
       const color = Grid.getRandomColor(colors)
 
       if (i === length - 1 && allTheSameColor) {
-        return Grid.getOtherColor(lastColor, colors)
+        return getOtherColor(lastColor, colors)
       }
 
       if (lastColor && lastColor !== color) {
@@ -47,21 +48,8 @@ class Grid extends PureComponent {
     })
   }
 
-  static getOtherColor(currentColor, [a, b]) {
-    return currentColor === a ? b : a
-  }
-
-  static areAllSameColor(tiles) {
-    let prevColor
-    return tiles.every(color => {
-      let same = color === prevColor
-      if (!prevColor) {
-        same = true
-      }
-
-      prevColor = color
-      return same
-    })
+  static areAllSameColor([color, ...colors]) {
+    return colors.every(c => c === color)
   }
 
   getRow(i, tiles) {
@@ -106,7 +94,7 @@ class Grid extends PureComponent {
     return tiles.map(
       (color, i) =>
         this.shouldChangeColor(i, source, tiles)
-          ? Grid.getOtherColor(color, colors)
+          ? getOtherColor(color, colors)
           : color
     )
   }
@@ -132,7 +120,8 @@ class Grid extends PureComponent {
     const { tiles, moveCount } = this.state
 
     if (onWin && Grid.areAllSameColor(tiles)) {
-      onWin(moveCount)
+      const [color] = tiles
+      onWin(color, moveCount)
     }
   }
 
