@@ -26,7 +26,7 @@ it('passes Tiles their index', () => {
   })
 })
 
-it('passes Tiles its own onClick', () => {
+it('passes Tiles its onTileClick', () => {
   const component = shallow(<Grid width={2} />)
   const onTileClick = component.instance().onTileClick
 
@@ -63,12 +63,9 @@ it('gives tiles color according to its state', () => {
 })
 
 it('gives tiles one of its given colors', () => {
-  const props = {
-    offColor: 'green',
-    targetColor: 'red'
-  }
+  const colors = ['green', 'red']
 
-  const colors = [props.offColor, props.targetColor]
+  const props = { colors, width: 3 }
 
   const component = shallow(<Grid {...props} />)
 
@@ -78,9 +75,10 @@ it('gives tiles one of its given colors', () => {
 })
 
 it('changes the color of the clicked tile', () => {
+  const colors = ['green', 'red']
+
   const props = {
-    offColor: 'green',
-    targetColor: 'red',
+    colors,
     width: 2
   }
 
@@ -104,13 +102,12 @@ it('changes the color of the clicked tile', () => {
 })
 
 it('changes the color of the clicked tile to a valid color', () => {
+  const colors = ['green', 'red']
+
   const props = {
-    offColor: 'green',
-    targetColor: 'red',
+    colors,
     width: 2
   }
-
-  const colors = [props.offColor, props.targetColor]
 
   const component = shallow(<Grid {...props} />)
 
@@ -126,10 +123,29 @@ it('changes the color of the clicked tile to a valid color', () => {
   expect(colors).toContain(color)
 })
 
-it('calls the given `onWin` if every tile is the target color', () => {
+it('calls the given `onWin` if every tile is its first color', () => {
+  const colors = ['green', 'red']
+
   const props = {
-    offColor: 'green',
-    targetColor: 'red',
+    colors,
+    width: 2,
+    onWin: jest.fn()
+  }
+
+  const component = shallow(<Grid {...props} />)
+
+  const tiles = ['green', 'green', 'green', 'green']
+
+  component.setState({ tiles })
+
+  expect(props.onWin).toBeCalled()
+})
+
+it('calls the given `onWin` if every tile is the second color', () => {
+  const colors = ['green', 'red']
+
+  const props = {
+    colors,
     width: 2,
     onWin: jest.fn()
   }
@@ -143,10 +159,29 @@ it('calls the given `onWin` if every tile is the target color', () => {
   expect(props.onWin).toBeCalled()
 })
 
-it('changes the color of the tile after the clicked one', () => {
+it('does not call the given `onWin` if not every tile is the same color', () => {
+  const colors = ['green', 'red']
+
   const props = {
-    offColor: 'green',
-    targetColor: 'red',
+    colors,
+    width: 2,
+    onWin: jest.fn()
+  }
+
+  const component = shallow(<Grid {...props} />)
+
+  const tiles = ['red', 'red', 'green', 'red']
+
+  component.setState({ tiles })
+
+  expect(props.onWin).not.toBeCalled()
+})
+
+it('changes the color of the tile after the clicked one', () => {
+  const colors = ['green', 'red']
+
+  const props = {
+    colors,
     width: 2
   }
 
@@ -170,9 +205,9 @@ it('changes the color of the tile after the clicked one', () => {
 })
 
 it('does not add more tiles when clicking the last one', () => {
+  const colors = ['green', 'red']
   const props = {
-    offColor: 'green',
-    targetColor: 'red',
+    colors,
     width: 2
   }
 
@@ -190,9 +225,10 @@ it('does not add more tiles when clicking the last one', () => {
 })
 
 it('does not change the color of the tile after the clicked one, when the clicked one is on the right edge of the grid', () => {
+  const colors = ['green', 'red']
+
   const props = {
-    offColor: 'green',
-    targetColor: 'red',
+    colors,
     width: 2
   }
 
@@ -216,9 +252,10 @@ it('does not change the color of the tile after the clicked one, when the clicke
 })
 
 it('changes the color of the tile before the clicked one', () => {
+  const colors = ['green', 'red']
+
   const props = {
-    offColor: 'green',
-    targetColor: 'red',
+    colors,
     width: 2
   }
 
@@ -242,9 +279,10 @@ it('changes the color of the tile before the clicked one', () => {
 })
 
 it('does not change the color of the tile before the clicked one, when the clicked one is on the left edge of the grid', () => {
+  const colors = ['green', 'red']
+
   const props = {
-    offColor: 'green',
-    targetColor: 'red',
+    colors,
     width: 2
   }
 
@@ -268,9 +306,10 @@ it('does not change the color of the tile before the clicked one, when the click
 })
 
 it('changes the color of the tile below the clicked one', () => {
+  const colors = ['green', 'red']
+
   const props = {
-    offColor: 'green',
-    targetColor: 'red',
+    colors,
     width: 2
   }
 
@@ -294,9 +333,10 @@ it('changes the color of the tile below the clicked one', () => {
 })
 
 it('does not change the color of the tile below the clicked one, if it is more than one space away', () => {
+  const colors = ['green', 'red']
+
   const props = {
-    offColor: 'green',
-    targetColor: 'red',
+    colors,
     width: 3
   }
 
@@ -320,9 +360,10 @@ it('does not change the color of the tile below the clicked one, if it is more t
 })
 
 it('does not change the color of a tile on the right of the clicked one, if it is more than one space away', () => {
+  const colors = ['green', 'red']
+
   const props = {
-    offColor: 'green',
-    targetColor: 'red',
+    colors,
     width: 3
   }
 
@@ -346,9 +387,10 @@ it('does not change the color of a tile on the right of the clicked one, if it i
 })
 
 it('keeps a count of the moves', () => {
+  const colors = ['green', 'red']
+
   const props = {
-    offColor: 'green',
-    targetColor: 'red',
+    colors,
     width: 2
   }
 
@@ -358,9 +400,10 @@ it('keeps a count of the moves', () => {
 })
 
 it('increases the move count for every click', () => {
+  const colors = ['green', 'red']
+
   const props = {
-    offColor: 'green',
-    targetColor: 'red',
+    colors,
     width: 2
   }
 
@@ -377,9 +420,10 @@ it('increases the move count for every click', () => {
 })
 
 it('calls the given `onWin` with its move count', () => {
+  const colors = ['green', 'red']
+
   const props = {
-    offColor: 'green',
-    targetColor: 'red',
+    colors,
     width: 2,
     onWin: jest.fn()
   }
@@ -396,9 +440,10 @@ it('calls the given `onWin` with its move count', () => {
 
 describe('getTilesSquare', () => {
   it('never returns tiles already in a win state', () => {
+    const colors = ['purple', 'purple']
+
     const props = {
-      offColor: 'purple',
-      targetColor: 'purple',
+      colors,
       width: 3
     }
 
@@ -406,10 +451,7 @@ describe('getTilesSquare', () => {
 
     const tiles = Grid.getTilesSquare(props)
 
-    expect(Grid.getOtherColor).toBeCalledWith('purple', {
-      offColor: 'purple',
-      targetColor: 'purple'
-    })
+    expect(Grid.getOtherColor).toBeCalledWith('purple', colors)
 
     expect(tiles[8]).toBe('rigged')
   })

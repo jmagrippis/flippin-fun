@@ -12,8 +12,7 @@ const Container = styled.div`
 
 class Grid extends PureComponent {
   static defaultProps = {
-    offColor: '#fbb13c',
-    targetColor: '#d81159',
+    colors: ['#d81159', '#fbb13c'],
     width: 3
   }
 
@@ -22,20 +21,20 @@ class Grid extends PureComponent {
     moveCount: 0
   }
 
-  static getRandomColor({ targetColor, offColor }) {
-    return Math.random() >= 0.5 ? targetColor : offColor
+  static getRandomColor([a, b]) {
+    return Math.random() >= 0.5 ? a : b
   }
 
-  static getTilesSquare({ width, ...restProps }) {
+  static getTilesSquare({ width, colors }) {
     const length = width ** 2
     let allTheSameColor = true
     let lastColor
 
     return [...Array(length)].map((v, i) => {
-      const color = Grid.getRandomColor(restProps)
+      const color = Grid.getRandomColor(colors)
 
       if (i === length - 1 && allTheSameColor) {
-        return Grid.getOtherColor(lastColor, restProps)
+        return Grid.getOtherColor(lastColor, colors)
       }
 
       if (lastColor && lastColor !== color) {
@@ -48,12 +47,21 @@ class Grid extends PureComponent {
     })
   }
 
-  static getOtherColor(currentColor, { targetColor, offColor }) {
-    return currentColor === targetColor ? offColor : targetColor
+  static getOtherColor(currentColor, [a, b]) {
+    return currentColor === a ? b : a
   }
 
-  static areAllTargetColor(tiles, targetColor) {
-    return tiles.every(color => color === targetColor)
+  static areAllSameColor(tiles) {
+    let prevColor
+    return tiles.every(color => {
+      let same = color === prevColor
+      if (!prevColor) {
+        same = true
+      }
+
+      prevColor = color
+      return same
+    })
   }
 
   getRow(i, tiles) {
@@ -90,7 +98,7 @@ class Grid extends PureComponent {
     )
   }
 
-  getNextTiles(tiles, sourceIndex, colors) {
+  getNextTiles(tiles, sourceIndex, { colors }) {
     const row = this.getRow(sourceIndex, tiles)
     const column = this.getColumn(sourceIndex, tiles)
 
@@ -120,10 +128,10 @@ class Grid extends PureComponent {
   }
 
   componentDidUpdate() {
-    const { onWin, targetColor } = this.props
+    const { onWin } = this.props
     const { tiles, moveCount } = this.state
 
-    if (onWin && Grid.areAllTargetColor(tiles, targetColor)) {
+    if (onWin && Grid.areAllSameColor(tiles)) {
       onWin(moveCount)
     }
   }
